@@ -10,6 +10,10 @@ export const runtime = "nodejs";
  * Disabled when FORTH_USE_FIXTURES=false.
  */
 export async function POST(request: Request) {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Not Found" }, { status: 404 });
+  }
+
   if (!useForthFixtures()) {
     return NextResponse.json(
       { error: "Dev Forth create only available in fixture mode" },

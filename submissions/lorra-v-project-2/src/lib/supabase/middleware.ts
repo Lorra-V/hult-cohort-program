@@ -33,12 +33,22 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
+
+  // Dev-only API probes — never public in production (even for signed-in users).
+  if (
+    pathname.startsWith("/api/dev/") &&
+    process.env.NODE_ENV === "production"
+  ) {
+    return NextResponse.json({ error: "Not Found" }, { status: 404 });
+  }
+
   const isPublic =
     pathname === "/" ||
     pathname.startsWith("/login") ||
     pathname.startsWith("/auth/") ||
     pathname.startsWith("/api/health") ||
-    pathname.startsWith("/api/dev/") ||
+    (pathname.startsWith("/api/dev/") &&
+      process.env.NODE_ENV !== "production") ||
     pathname.startsWith("/api/webhooks/") ||
     pathname.startsWith("/api/cron/") ||
     pathname.startsWith("/api/forth/status");

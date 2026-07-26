@@ -6,6 +6,10 @@ import { createClient } from "@supabase/supabase-js";
  * Uses service role — never expose sensitive data; counts only.
  */
 export async function GET() {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Not Found" }, { status: 404 });
+  }
+
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
