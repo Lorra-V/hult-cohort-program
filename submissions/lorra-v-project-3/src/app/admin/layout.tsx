@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth/session";
 
 const links = [
   { href: "/admin", label: "Overview" },
+  { href: "/admin/builders", label: "Builders" },
   { href: "/admin/enquiries", label: "Enquiries" },
 ];
 

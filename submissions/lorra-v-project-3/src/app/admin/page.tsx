@@ -40,14 +40,15 @@ export default async function AdminOverviewPage() {
   const enquiries = enquiriesRes.count ?? 0;
   const newEnquiries = newEnquiriesRes.count ?? 0;
 
-  const statCards = [
-    { label: "Builders", value: builders },
+  const cards: {
+    label: string;
+    value: number;
+    href?: string;
+  }[] = [
+    { label: "Builders", value: builders, href: "/admin/builders" },
     { label: "Published projects", value: publishedProjects },
     { label: "Campaigns", value: campaigns },
     { label: "Shared amplifications", value: amplifications },
-  ];
-
-  const linkCards = [
     {
       label: "Partner enquiries",
       value: enquiries,
@@ -72,33 +73,34 @@ export default async function AdminOverviewPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {statCards.map((card) => (
-          <div
-            key={card.label}
-            className="rounded-xl border border-border bg-background-elevated p-5"
-          >
-            <p className="text-xs uppercase tracking-[0.14em] text-foreground-muted">
-              {card.label}
-            </p>
-            <p className="mt-2 font-display text-3xl font-semibold">
-              {card.value}
-            </p>
-          </div>
-        ))}
-        {linkCards.map((card) => (
-          <Link
-            key={card.label}
-            href={card.href}
-            className="rounded-xl border border-border bg-background-elevated p-5 transition hover:border-accent-coral/50"
-          >
-            <p className="text-xs uppercase tracking-[0.14em] text-foreground-muted">
-              {card.label}
-            </p>
-            <p className="mt-2 font-display text-3xl font-semibold">
-              {card.value}
-            </p>
-          </Link>
-        ))}
+        {cards.map((card) =>
+          card.href ? (
+            <Link
+              key={card.label}
+              href={card.href}
+              className="rounded-xl border border-border bg-background-elevated p-5 transition hover:border-accent-coral/50"
+            >
+              <p className="text-xs uppercase tracking-[0.14em] text-foreground-muted">
+                {card.label}
+              </p>
+              <p className="mt-2 font-display text-3xl font-semibold">
+                {card.value}
+              </p>
+            </Link>
+          ) : (
+            <div
+              key={card.label}
+              className="rounded-xl border border-border bg-background-elevated p-5"
+            >
+              <p className="text-xs uppercase tracking-[0.14em] text-foreground-muted">
+                {card.label}
+              </p>
+              <p className="mt-2 font-display text-3xl font-semibold">
+                {card.value}
+              </p>
+            </div>
+          ),
+        )}
       </div>
     </div>
   );
