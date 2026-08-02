@@ -72,6 +72,51 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <section className="border-t border-border/80">
+        <div className="mx-auto max-w-3xl px-6 py-20 md:py-24">
+          <p className="text-xs uppercase tracking-[0.16em] text-accent">
+            What Comentiq is
+          </p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl">
+            The public showcase for the Hult Summer Cohort 2026 — a live
+            record of what builders are actually shipping, told honestly.
+          </h2>
+          <div className="mt-8 space-y-5 text-base leading-relaxed text-foreground-muted md:text-lg">
+            <p>
+              Every week, builders submit real progress: what they built, what
+              broke, what they learned, what&apos;s next.
+            </p>
+            <p>
+              The result is a feed of credible, verifiable progress rather than
+              a static portfolio wall. Builders amplify each other&apos;s
+              strongest work with genuine peer endorsements. Partners — hiring
+              managers, accelerators, potential pilot customers — browse by
+              what&apos;s actually happening right now and reach out directly to
+              the people and projects that match what they&apos;re looking for.
+            </p>
+            <p>
+              If you&apos;re a{" "}
+              <Link
+                href="/builders"
+                className="text-accent-builders hover:underline"
+              >
+                builder
+              </Link>
+              : this is where your progress becomes a story worth sharing. If
+              you&apos;re a{" "}
+              <Link
+                href="/partners"
+                className="text-accent-partners hover:underline"
+              >
+                partner
+              </Link>
+              : this is where you find people doing real, current work — not a
+              resume, a live feed.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {loadError ? (
         <div className="mx-auto max-w-6xl px-6 py-16">
           <p role="alert" className="text-sm text-danger">
