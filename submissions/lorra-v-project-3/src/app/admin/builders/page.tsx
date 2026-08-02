@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { requireAdmin } from "@/lib/auth/session";
@@ -5,6 +6,7 @@ import {
   formatExactTimestamp,
   formatRelativeTime,
 } from "@/lib/format-relative-time";
+import { builderPath } from "@/lib/paths";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Profile, ProfileStatus } from "@/lib/types/profile";
 
@@ -24,7 +26,7 @@ function statusTone(
 
 type BuilderRow = Pick<
   Profile,
-  "id" | "name" | "email" | "profile_status" | "created_at"
+  "id" | "slug" | "name" | "email" | "profile_status" | "created_at"
 >;
 
 export default async function AdminBuildersPage() {
@@ -33,7 +35,7 @@ export default async function AdminBuildersPage() {
 
   const { data, error } = await admin
     .from("profiles")
-    .select("id, name, email, profile_status, created_at")
+    .select("id, slug, name, email, profile_status, created_at")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -75,16 +77,32 @@ export default async function AdminBuildersPage() {
                 <th className="px-4 py-3 font-medium">Name</th>
                 <th className="px-4 py-3 font-medium">Email</th>
                 <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 font-medium">Slug</th>
                 <th className="px-4 py-3 font-medium">Created</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {builders.map((builder) => {
                 const exact = formatExactTimestamp(builder.created_at);
+                const publicHref =
+                  builder.profile_status === "published" && builder.slug
+                    ? builderPath(builder.slug)
+                    : null;
                 return (
                   <tr key={builder.id} className="align-top">
                     <td className="px-4 py-3 font-medium">
-                      {builder.name || "—"}
+                      {publicHref ? (
+                        <Link
+                          href={publicHref}
+                          className="hover:text-accent-coral"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {builder.name || "—"}
+                        </Link>
+                      ) : (
+                        builder.name || "—"
+                      )}
                     </td>
                     <td className="px-4 py-3 text-foreground-muted">
                       {builder.email}
@@ -93,6 +111,9 @@ export default async function AdminBuildersPage() {
                       <Badge tone={statusTone(builder.profile_status)}>
                         {PROFILE_STATUS_LABELS[builder.profile_status]}
                       </Badge>
+                    </td>
+                    <td className="px-4 py-3 font-mono text-xs text-foreground-muted">
+                      {builder.slug || "—"}
                     </td>
                     <td
                       className="px-4 py-3 whitespace-nowrap"

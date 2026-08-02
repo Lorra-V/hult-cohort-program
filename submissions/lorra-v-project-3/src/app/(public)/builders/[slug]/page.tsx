@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { BuilderAvatar } from "@/components/showcase/BuilderAvatar";
 import { CampaignStoryCards } from "@/components/showcase/CampaignStoryCards";
 import { ProjectCard } from "@/components/showcase/ProjectCard";
@@ -7,25 +7,39 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { logAnalyticsEvent } from "@/lib/analytics";
-import { partnerInterestPath, projectPath } from "@/lib/paths";
+import { builderPath, partnerInterestPath, projectPath } from "@/lib/paths";
 import {
-  getPublishedBuilder,
+  getPublishedBuilderById,
+  getPublishedBuilderBySlug,
   listApprovedCampaignContentForCreator,
   listPublishedProjectsForOwner,
 } from "@/lib/showcase";
+import { looksLikeUuid } from "@/lib/slug";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
 export default async function BuilderDetailPage({ params }: Props) {
-  const { slug: id } = await params;
-  const builder = await getPublishedBuilder(id);
+  const { slug } = await params;
+
+  let builder = await getPublishedBuilderBySlug(slug);
+
+  // Legacy /builders/<uuid> links → redirect to the stable slug URL.
+  if (!builder && looksLikeUuid(slug)) {
+    const byId = await getPublishedBuilderById(slug);
+    if (byId?.slug) {
+      redirect(builderPath(byId.slug));
+    }
+    // Published but not yet backfilled — still render so the page isn't broken.
+    if (byId) builder = byId;
+  }
+
   if (!builder) notFound();
 
   void logAnalyticsEvent({
     eventType: "profile_view",
-    metadata: { profile_id: builder.id },
+    metadata: { profile_id: builder.id, slug: builder.slug },
   });
 
   const [projects, campaigns] = await Promise.all([

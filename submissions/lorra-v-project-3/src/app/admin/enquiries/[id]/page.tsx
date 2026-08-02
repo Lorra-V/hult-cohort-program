@@ -14,7 +14,12 @@ type Props = {
 
 type EnquiryDetail = PartnerEnquiry & {
   project: { id: string; name: string; slug: string } | null;
-  participant: { id: string; name: string | null; email: string } | null;
+  participant: {
+    id: string;
+    slug: string | null;
+    name: string | null;
+    email: string;
+  } | null;
 };
 
 function statusTone(
@@ -33,7 +38,7 @@ export default async function AdminEnquiryDetailPage({ params }: Props) {
   const { data, error } = await admin
     .from("partner_enquiries")
     .select(
-      "*, project:projects!partner_enquiries_project_id_fkey(id, name, slug), participant:profiles!partner_enquiries_participant_id_fkey(id, name, email)",
+      "*, project:projects!partner_enquiries_project_id_fkey(id, name, slug), participant:profiles!partner_enquiries_participant_id_fkey(id, slug, name, email)",
     )
     .eq("id", id)
     .maybeSingle();
@@ -176,12 +181,18 @@ export default async function AdminEnquiryDetailPage({ params }: Props) {
             </dt>
             <dd className="mt-1 text-sm">
               {enquiry.participant ? (
-                <Link
-                  href={builderPath(enquiry.participant.id)}
-                  className="text-accent hover:underline"
-                >
-                  {enquiry.participant.name || enquiry.participant.email}
-                </Link>
+                enquiry.participant.slug ? (
+                  <Link
+                    href={builderPath(enquiry.participant.slug)}
+                    className="text-accent hover:underline"
+                  >
+                    {enquiry.participant.name || enquiry.participant.email}
+                  </Link>
+                ) : (
+                  <span>
+                    {enquiry.participant.name || enquiry.participant.email}
+                  </span>
+                )
               ) : (
                 "—"
               )}

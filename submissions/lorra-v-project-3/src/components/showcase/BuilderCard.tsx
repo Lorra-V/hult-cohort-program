@@ -9,6 +9,8 @@ type Props = {
 };
 
 export function BuilderCard({ builder }: Props) {
+  if (!builder.slug) return null;
+
   const bioLine = builder.biography?.trim()
     ? builder.biography.trim().split(/\n/)[0]!.slice(0, 140)
     : "Builder in the Hult Summer Cohort.";
@@ -16,7 +18,7 @@ export function BuilderCard({ builder }: Props) {
 
   return (
     <Link
-      href={builderPath(builder.id)}
+      href={builderPath(builder.slug)}
       className="group block cursor-pointer border-b border-border/80 py-6 transition hover:border-accent-builders/50 md:py-8"
     >
       <div className="flex gap-5">

@@ -7,6 +7,7 @@ import type { Project } from "@/lib/types/project";
 export type PublicBuilder = Pick<
   Profile,
   | "id"
+  | "slug"
   | "name"
   | "avatar_url"
   | "biography"
@@ -22,7 +23,7 @@ export type PublicBuilder = Pick<
 
 export type PublicProjectOwner = Pick<
   Profile,
-  "id" | "name" | "avatar_url" | "location"
+  "id" | "slug" | "name" | "avatar_url" | "location"
 > & {
   /** False when profile is unpublished/incomplete — show name, do not link. */
   linkable: boolean;
@@ -47,13 +48,14 @@ export type ApprovedCampaignContent = {
   };
 };
 
+const PUBLIC_BUILDER_COLUMNS =
+  "id, slug, name, avatar_url, biography, location, skills, interests, social_links, website_url, github_profile_url, profile_status, visible_to_partners";
+
 export async function listPublishedBuilders(limit = 48): Promise<PublicBuilder[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select(
-      "id, name, avatar_url, biography, location, skills, interests, social_links, website_url, github_profile_url, profile_status, visible_to_partners",
-    )
+    .select(PUBLIC_BUILDER_COLUMNS)
     .eq("profile_status", "published")
     .order("updated_at", { ascending: false })
     .limit(limit);
@@ -62,15 +64,28 @@ export async function listPublishedBuilders(limit = 48): Promise<PublicBuilder[]
   return (data ?? []) as PublicBuilder[];
 }
 
-export async function getPublishedBuilder(
+export async function getPublishedBuilderBySlug(
+  slug: string,
+): Promise<PublicBuilder | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("profiles")
+    .select(PUBLIC_BUILDER_COLUMNS)
+    .eq("slug", slug)
+    .eq("profile_status", "published")
+    .maybeSingle();
+
+  if (error) throw error;
+  return (data as PublicBuilder | null) ?? null;
+}
+
+export async function getPublishedBuilderById(
   id: string,
 ): Promise<PublicBuilder | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select(
-      "id, name, avatar_url, biography, location, skills, interests, social_links, website_url, github_profile_url, profile_status, visible_to_partners",
-    )
+    .select(PUBLIC_BUILDER_COLUMNS)
     .eq("id", id)
     .eq("profile_status", "published")
     .maybeSingle();
@@ -83,13 +98,17 @@ async function resolveProjectOwner(
   ownerId: string,
   nestedOwner: {
     id: string;
+    slug: string | null;
     name: string | null;
     avatar_url: string | null;
     location: string | null;
   } | null,
 ): Promise<PublicProjectOwner | null> {
   if (nestedOwner) {
-    return { ...nestedOwner, linkable: true };
+    return {
+      ...nestedOwner,
+      linkable: Boolean(nestedOwner.slug),
+    };
   }
 
   // Unpublished/incomplete owners are hidden by profiles RLS on the join.
@@ -98,17 +117,19 @@ async function resolveProjectOwner(
   const admin = createAdminClient();
   const { data } = await admin
     .from("profiles")
-    .select("id, name, avatar_url, location, profile_status")
+    .select("id, slug, name, avatar_url, location, profile_status")
     .eq("id", ownerId)
     .maybeSingle();
 
   if (!data) return null;
   return {
     id: data.id as string,
+    slug: (data.slug as string | null) ?? null,
     name: (data.name as string | null) ?? null,
     avatar_url: (data.avatar_url as string | null) ?? null,
     location: (data.location as string | null) ?? null,
-    linkable: data.profile_status === "published",
+    linkable:
+      data.profile_status === "published" && Boolean(data.slug),
   };
 }
 
@@ -116,12 +137,14 @@ function normalizeNestedOwner(
   raw: unknown,
 ): {
   id: string;
+  slug: string | null;
   name: string | null;
   avatar_url: string | null;
   location: string | null;
 } | null {
   const owner = (Array.isArray(raw) ? raw[0] : raw) as {
     id: string;
+    slug: string | null;
     name: string | null;
     avatar_url: string | null;
     location: string | null;
@@ -137,7 +160,7 @@ export async function listPublishedProjects(options?: {
   let query = supabase
     .from("projects")
     .select(
-      "*, owner:profiles!projects_owner_id_fkey(id, name, avatar_url, location)",
+      "*, owner:profiles!projects_owner_id_fkey(id, slug, name, avatar_url, location)",
     )
     .eq("status", "published")
     .order("updated_at", { ascending: false })
@@ -169,7 +192,7 @@ export async function getPublishedProjectBySlug(
   const { data, error } = await supabase
     .from("projects")
     .select(
-      "*, owner:profiles!projects_owner_id_fkey(id, name, avatar_url, location)",
+      "*, owner:profiles!projects_owner_id_fkey(id, slug, name, avatar_url, location)",
     )
     .eq("slug", slug)
     .eq("status", "published")
@@ -302,6 +325,7 @@ export type PublicAmplification = {
   shared_at: string | null;
   participant: {
     id: string;
+    slug: string | null;
     name: string | null;
     avatar_url: string | null;
   } | null;
@@ -330,7 +354,7 @@ export async function listSharedAmplificationsForProject(
   const { data, error } = await supabase
     .from("amplifications")
     .select(
-      "id, content, shared_at, participant:profiles!amplifications_participant_id_fkey(id, name, avatar_url)",
+      "id, content, shared_at, participant:profiles!amplifications_participant_id_fkey(id, slug, name, avatar_url)",
     )
     .in("campaign_id", campaignIds)
     .eq("status", "shared")

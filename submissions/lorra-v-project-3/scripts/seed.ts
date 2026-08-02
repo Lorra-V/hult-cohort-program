@@ -12,6 +12,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { randomBytes } from "node:crypto";
 import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
+import { nextAvailableSlug } from "../src/lib/slug";
 
 const SEED_EMAIL_DOMAIN = "seed.comentiq.demo";
 const SEED_PASSWORD = "ComentiqSeed!26";
@@ -687,8 +688,12 @@ async function main() {
     }
   >();
 
+  const takenProfileSlugs = new Set<string>();
+
   for (const builder of BUILDERS) {
     const email = `${builder.emailLocal}@${SEED_EMAIL_DOMAIN}`;
+    const profileSlug = nextAvailableSlug(builder.name, takenProfileSlugs);
+    takenProfileSlugs.add(profileSlug);
     const { data: created, error: createError } =
       await admin.auth.admin.createUser({
         email,
@@ -707,6 +712,7 @@ async function main() {
       id: userId,
       email,
       name: builder.name,
+      slug: profileSlug,
       role: "participant",
       biography: builder.biography,
       location: builder.location,

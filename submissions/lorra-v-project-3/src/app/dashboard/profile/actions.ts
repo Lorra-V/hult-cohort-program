@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth/session";
+import { allocateUniqueProfileSlug } from "@/lib/profile-slug";
+import { builderPath } from "@/lib/paths";
 import { createClient } from "@/lib/supabase/server";
 import {
   profileFormSchema,
@@ -30,7 +32,7 @@ export async function saveProfileAction(
   _prev: ProfileActionState,
   formData: FormData,
 ): Promise<ProfileActionState> {
-  const { user } = await requireUser();
+  const { user, profile } = await requireUser();
 
   const parsed = profileFormSchema.safeParse({
     name: String(formData.get("name") || ""),
@@ -90,6 +92,7 @@ export async function saveProfileAction(
 
   revalidatePath("/dashboard/profile");
   revalidatePath("/builders");
+  if (profile.slug) revalidatePath(builderPath(profile.slug));
   return { success: "Profile saved." };
 }
 
@@ -124,15 +127,37 @@ export async function setProfileStatusAction(
   }
 
   const supabase = await createClient();
+  const update: {
+    profile_status: ProfileStatus;
+    slug?: string;
+  } = { profile_status: status };
+
+  // Generate slug once on first publish; keep stable across renames / republish.
+  if (status === "published" && !profile.slug) {
+    try {
+      update.slug = await allocateUniqueProfileSlug(profile.name, user.id);
+    } catch (err) {
+      return {
+        error:
+          err instanceof Error
+            ? err.message
+            : "Could not allocate a profile URL slug.",
+      };
+    }
+  }
+
   const { error } = await supabase
     .from("profiles")
-    .update({ profile_status: status })
+    .update(update)
     .eq("id", user.id);
 
   if (error) return { error: error.message };
 
+  const publicSlug = update.slug ?? profile.slug;
+
   revalidatePath("/dashboard/profile");
   revalidatePath("/builders");
+  if (publicSlug) revalidatePath(builderPath(publicSlug));
   return {
     success:
       status === "published"

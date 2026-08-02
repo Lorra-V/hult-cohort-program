@@ -288,10 +288,10 @@ function OwnerAttribution({ owner }: { owner: PublicProjectOwner }) {
     </>
   );
 
-  if (owner.linkable) {
+  if (owner.linkable && owner.slug) {
     return (
       <Link
-        href={builderPath(owner.id)}
+        href={builderPath(owner.slug)}
         className="mt-8 inline-flex items-center gap-3 text-sm text-foreground-muted transition hover:text-foreground"
       >
         {body}

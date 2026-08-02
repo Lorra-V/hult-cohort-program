@@ -25,16 +25,16 @@ export function AmplificationBoosts({ items }: Props) {
       <ul className="space-y-6">
         {items.map((item) => {
           const name = item.participant?.name || "Cohort builder";
-          const participantId = item.participant?.id;
+          const participantSlug = item.participant?.slug;
           return (
             <li
               key={item.id}
               className="rounded-xl border border-border bg-background-elevated p-5"
             >
               <div className="flex gap-4">
-                {participantId ? (
+                {participantSlug ? (
                   <Link
-                    href={builderPath(participantId)}
+                    href={builderPath(participantSlug)}
                     className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-accent-builders/40 bg-background-muted font-display text-sm font-semibold text-accent-builders transition hover:border-accent-builders"
                   >
                     {item.participant?.avatar_url ? (
@@ -58,9 +58,9 @@ export function AmplificationBoosts({ items }: Props) {
 
                 <div className="min-w-0 flex-1 space-y-2">
                   <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    {participantId ? (
+                    {participantSlug ? (
                       <Link
-                        href={builderPath(participantId)}
+                        href={builderPath(participantSlug)}
                         className="font-display text-lg font-semibold tracking-tight hover:text-accent-builders"
                       >
                         {name}

@@ -6,6 +6,8 @@ export type Profile = {
   name: string | null;
   email: string;
   role: UserRole;
+  /** Stable public URL segment; set once on first publish. */
+  slug: string | null;
   avatar_url: string | null;
   biography: string | null;
   location: string | null;

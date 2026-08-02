@@ -20,7 +20,7 @@ export default async function AmplifyCampaignPage({ params }: Props) {
   const { data: campaign, error } = await supabase
     .from("campaigns")
     .select(
-      "id, creator_id, status, story_angle, why_angle_matters, core_message, evidence, call_to_action, project:projects!campaigns_project_id_fkey(id, name, slug, status, tagline), creator:profiles!campaigns_creator_id_fkey(id, name, avatar_url)",
+      "id, creator_id, status, story_angle, why_angle_matters, core_message, evidence, call_to_action, project:projects!campaigns_project_id_fkey(id, name, slug, status, tagline), creator:profiles!campaigns_creator_id_fkey(id, slug, name, avatar_url)",
     )
     .eq("id", campaignId)
     .eq("status", "approved")
@@ -53,6 +53,7 @@ export default async function AmplifyCampaignPage({ params }: Props) {
   } | null;
   const creator = campaign.creator as unknown as {
     id: string;
+    slug: string | null;
     name: string | null;
     avatar_url: string | null;
   } | null;
@@ -100,9 +101,9 @@ export default async function AmplifyCampaignPage({ params }: Props) {
           >
             Public project →
           </Link>
-          {creator ? (
+          {creator?.slug ? (
             <Link
-              href={builderPath(creator.id)}
+              href={builderPath(creator.slug)}
               className="text-accent hover:underline"
             >
               Builder profile →
