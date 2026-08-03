@@ -1,5 +1,15 @@
 export const COHORT_SLUG = "hult-summer-2026";
 
+/** Domain used by scripts/seed.ts for local/demo personas. */
+export const SEED_EMAIL_DOMAIN = "seed.comentiq.demo";
+
+export function isDemoProfileEmail(
+  email: string | null | undefined,
+): boolean {
+  if (!email) return false;
+  return email.trim().toLowerCase().endsWith(`@${SEED_EMAIL_DOMAIN}`);
+}
+
 export const SECTORS = [
   "Education",
   "Community Development",

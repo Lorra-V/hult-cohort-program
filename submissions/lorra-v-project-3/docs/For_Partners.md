@@ -29,3 +29,8 @@ discovery currently works through direct browsing and enquiries
 rather than filtered search — we're prioritizing getting real
 partner conversations started over building out every discovery
 feature first.
+
+**Demo profiles:** some builders in the directory are seed/demo
+personas used to populate the showcase during the pilot. They are
+labeled **Demo profile** in the UI so they stay distinguishable from
+real cohort signups.

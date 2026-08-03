@@ -12,11 +12,10 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { randomBytes } from "node:crypto";
 import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
+import { COHORT_SLUG, SEED_EMAIL_DOMAIN } from "../src/lib/constants";
 import { nextAvailableSlug } from "../src/lib/slug";
 
-const SEED_EMAIL_DOMAIN = "seed.comentiq.demo";
 const SEED_PASSWORD = "ComentiqSeed!26";
-const COHORT_SLUG = "hult-summer-2026";
 
 function loadEnvLocal() {
   const path = resolve(process.cwd(), ".env.local");

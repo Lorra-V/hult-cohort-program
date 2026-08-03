@@ -1,5 +1,6 @@
 import "server-only";
 
+import { isDemoProfileEmail } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/lib/types/profile";
 import type { Project } from "@/lib/types/project";
@@ -19,7 +20,10 @@ export type PublicBuilder = Pick<
   | "github_profile_url"
   | "profile_status"
   | "visible_to_partners"
->;
+> & {
+  /** Derived server-side from seed email domain — never expose the email. */
+  isDemo: boolean;
+};
 
 export type PublicProjectOwner = Pick<
   Profile,
@@ -48,8 +52,19 @@ export type ApprovedCampaignContent = {
   };
 };
 
+/** Email is selected only to derive `isDemo`, then stripped before return. */
 const PUBLIC_BUILDER_COLUMNS =
-  "id, slug, name, avatar_url, biography, location, skills, interests, social_links, website_url, github_profile_url, profile_status, visible_to_partners";
+  "id, slug, name, email, avatar_url, biography, location, skills, interests, social_links, website_url, github_profile_url, profile_status, visible_to_partners";
+
+type BuilderRow = Omit<PublicBuilder, "isDemo"> & { email: string };
+
+function toPublicBuilder(row: BuilderRow): PublicBuilder {
+  const { email, ...rest } = row;
+  return {
+    ...rest,
+    isDemo: isDemoProfileEmail(email),
+  };
+}
 
 export async function listPublishedBuilders(limit = 48): Promise<PublicBuilder[]> {
   const supabase = await createClient();
@@ -61,7 +76,7 @@ export async function listPublishedBuilders(limit = 48): Promise<PublicBuilder[]
     .limit(limit);
 
   if (error) throw error;
-  return (data ?? []) as PublicBuilder[];
+  return ((data ?? []) as BuilderRow[]).map(toPublicBuilder);
 }
 
 export async function getPublishedBuilderBySlug(
@@ -76,7 +91,8 @@ export async function getPublishedBuilderBySlug(
     .maybeSingle();
 
   if (error) throw error;
-  return (data as PublicBuilder | null) ?? null;
+  if (!data) return null;
+  return toPublicBuilder(data as BuilderRow);
 }
 
 export async function getPublishedBuilderById(
@@ -91,7 +107,8 @@ export async function getPublishedBuilderById(
     .maybeSingle();
 
   if (error) throw error;
-  return (data as PublicBuilder | null) ?? null;
+  if (!data) return null;
+  return toPublicBuilder(data as BuilderRow);
 }
 
 async function resolveProjectOwner(

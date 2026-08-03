@@ -67,9 +67,19 @@ export default async function BuilderDetailPage({ params }: Props) {
               <p className="text-xs uppercase tracking-[0.16em] text-foreground-muted">
                 Builder
               </p>
-              <h1 className="mt-2 break-words font-display text-4xl font-semibold tracking-tight md:text-5xl">
-                {builder.name || "Builder"}
-              </h1>
+              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
+                <h1 className="break-words font-display text-4xl font-semibold tracking-tight md:text-5xl">
+                  {builder.name || "Builder"}
+                </h1>
+                {builder.isDemo ? (
+                  <Badge
+                    tone="muted"
+                    className="text-[11px] font-normal tracking-normal"
+                  >
+                    Demo profile
+                  </Badge>
+                ) : null}
+              </div>
               {builder.location ? (
                 <p className="mt-2 break-words text-foreground-muted">
                   {builder.location}

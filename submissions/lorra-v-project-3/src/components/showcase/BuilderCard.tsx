@@ -34,6 +34,14 @@ export function BuilderCard({ builder }: Props) {
             <h3 className="break-words font-display text-xl font-semibold tracking-tight transition group-hover:text-accent-builders md:text-2xl">
               {builder.name || "Builder"}
             </h3>
+            {builder.isDemo ? (
+              <Badge
+                tone="muted"
+                className="align-middle text-[11px] font-normal tracking-normal"
+              >
+                Demo profile
+              </Badge>
+            ) : null}
             {builder.location ? (
               <span className="break-words text-sm text-foreground-muted">
                 {builder.location}
