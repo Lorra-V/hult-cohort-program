@@ -12,7 +12,7 @@ Accompanying three-year financial model: [`investor/TEF_Three_Year_Financial_Mod
 ## App URL + user metrics
 **Production app:** https://tef-deploy.vercel.app
 **Metrics source:** own instance of the Ludwitt/Hult reference API (Railway), same instance used for Week 4's evidence — https://ludwitt-hult-api-production.up.railway.app, app_id d548f419-afc3-47c7-822e-c04e489a93cc
-**Snapshot file:** [`investor/metrics-snapshot-2026-08-17.json`](./investor/metrics-snapshot-2026-08-17.json) — raw `GET /v1/apps/{app_id}/metrics` response from 2026-08-17. Two founder test accounts (`external.learner.506589@example.com`, `webblywebpro@gmail.com`) — excluded from the real count.
+**Snapshot file:** [`investor/metrics-snapshot-2026-08-17.json`](./investor/metrics-snapshot-2026-08-17.json) — raw `GET /v1/apps/{app_id}/metrics` response from 2026-08-17 (`qualified_users: 12`). **Real confirmed qualifying users: 8**, verified row-by-row against `progress` / `profile_results`. Separately, **1 profile-only** engaged user completed the assessment but fired no Ludwitt qualifying event. Full breakdown: [`investor/user-verification.md`](./investor/user-verification.md).
 
 ## Investor touch log
 One qualified investor touchpoint (direct outreach + pitch review). Structured entry: [`INVESTOR_LOG.md`](./INVESTOR_LOG.md).
