@@ -12,19 +12,20 @@ Accompanying three-year financial model: [`investor/TEF_Three_Year_Financial_Mod
 ## App URL + user metrics
 **Production app:** https://tef-deploy.vercel.app
 **Metrics source:** own instance of the Ludwitt/Hult reference API (Railway), same instance used for Week 4's evidence — https://ludwitt-hult-api-production.up.railway.app, app_id d548f419-afc3-47c7-822e-c04e489a93cc
-**Snapshot:** August 16, 2026, ~4:44pm ET — Ludwitt/Hult API reports `qualified_users: 11`. Two are founder test accounts (`external.learner.506589@example.com`, `webblywebpro@gmail.com`) — excluded. **Real external qualified users: 11 minus 2**.
+**Snapshot file:** [`investor/metrics-snapshot-2026-08-17.json`](./investor/metrics-snapshot-2026-08-17.json) — raw `GET /v1/apps/{app_id}/metrics` response from 2026-08-17. Two founder test accounts (`external.learner.506589@example.com`, `webblywebpro@gmail.com`) — excluded from the real count.
 
 ## Investor touch log
-Reached out directly to a Venture Capital Resident and Director at a regional founder-support organization (contact redacted), sharing the live product and requesting feedback on venture viability. He reviewed the pitch and responded substantively — noting genuine interest in the problem space, and offering a structured paid advisory session (rather than an informal chat). Given founder budget constraints at this stage, the paid session wasn't booked; the relationship remains open, and he indicated he would flag relevant introductions from his network after reviewing the product further.
+One qualified investor touchpoint (direct outreach + pitch review). Structured entry: [`INVESTOR_LOG.md`](./INVESTOR_LOG.md).
 
-Two additional practitioners completed the product and provided written feedback:
+## Customer discovery feedback
+Two additional practitioners completed the product and provided written feedback (not investor engagement):
 
-> "My profile scores definitely captured how I feel about using AI to support clearly defined organisational objectives." — Curt P. Wellington, Faculty/Consultant, Arthur Lok Jack Graduate School of Business (usefulness 4/5, would continue using it)
+> "My profile scores definitely captured how I feel about using AI to support clearly defined organisational objectives." — Faculty, regional business school (usefulness 4/5, would continue using it)
 
-> "Yes. I sent it around, asking others to complete it as well." — Gwendolyn McLaren, HR Consultant, GCO Consulting
+> "Yes. I sent it around, asking others to complete it as well." — HR consultant
 
 ## Test plan
 - [x] Investor deck committed in repo
 - [x] Business plan committed in repo
 - [ ] ≥25 qualified external users, date-stamped snapshot
-- [ ] At least one documented investor engagement (PII redacted)
+- [x] At least one documented investor engagement (PII redacted)
