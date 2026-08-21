@@ -24,6 +24,12 @@ Two additional practitioners completed the product and provided written feedback
 
 > "Yes. I sent it around, asking others to complete it as well." — HR consultant
 
+> "What a brilliant course; so well designed and accessible. I completely enjoyed it and learned so much from that module... The module makes clear distinctions about the value of the human element in understanding a problem through observation, lived experience and curiosity... AI generations are largely permutations of existing data and not necessarily real innovation. Beautifully written generative outcomes do not mean it's a correct solution." — Tracy Farrag, Business Development Representative, Media & Editorial Projects Ltd (rated the module 5/5)
+
+> "I think the course is critical for everyone who uses AI because it addresses the inherent dangers if we don't understand our purpose in assigning a task to AI..." — on why the full programme is worth paying for
+
+Tracy has since referred two additional contacts for review: an author who has written on AI and the enduring value of human judgment, and a senior lecturer at UWI (University of the West Indies).
+
 ## Test plan
 - [x] Investor deck committed in repo
 - [x] Business plan committed in repo
