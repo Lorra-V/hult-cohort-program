@@ -55,7 +55,17 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // Auth pages: send signed-in users into the app.
+  // /forgot-password is public. /reset-password needs the recovery session
+  // from /auth/callback and must not be treated as an anonymous auth screen
+  // (those bounce signed-in users to /dashboard).
+  if (!user && pathname === "/reset-password") {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/forgot-password";
+    redirectUrl.search = "";
+    redirectUrl.searchParams.set("error", "recovery_session");
+    return NextResponse.redirect(redirectUrl);
+  }
+
   if (user && (pathname === "/login" || pathname === "/signup")) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/dashboard";

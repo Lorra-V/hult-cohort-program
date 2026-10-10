@@ -31,6 +31,9 @@ export function friendlyAuthError(message: string | null | undefined): string {
   if (lower === "missing_code" || lower === "auth_failed") {
     return "Sign-in link was invalid or expired. Please try again.";
   }
+  if (lower === "recovery_session") {
+    return "Your reset link is invalid or has expired. Request a new one.";
+  }
   if (lower === "missing_email") {
     return "Email is required.";
   }

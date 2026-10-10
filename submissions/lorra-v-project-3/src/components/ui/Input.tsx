@@ -12,12 +12,14 @@ export function Input({
   hint,
   error,
   id,
+  "aria-describedby": ariaDescribedBy,
   ...props
 }: InputProps) {
   const inputId = id ?? props.name;
   const hintId = hint ? `${inputId}-hint` : undefined;
   const errorId = error ? `${inputId}-error` : undefined;
-  const describedBy = [errorId, hintId].filter(Boolean).join(" ") || undefined;
+  const describedBy =
+    [ariaDescribedBy, errorId, hintId].filter(Boolean).join(" ") || undefined;
 
   return (
     <label className="flex w-full flex-col gap-1.5" htmlFor={inputId}>

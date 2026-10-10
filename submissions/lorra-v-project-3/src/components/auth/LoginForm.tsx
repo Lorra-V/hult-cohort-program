@@ -18,11 +18,14 @@ type Props = {
   initialError?: string | null;
 };
 
+const FORM_ERROR_ID = "login-error";
+
 export function LoginForm({ next = "/dashboard", initialError }: Props) {
   const [state, action, pending] = useActionState<AuthActionState, FormData>(
     loginAction,
     initialError ? { error: initialError } : null,
   );
+  const errorDescribedBy = state?.error ? FORM_ERROR_ID : undefined;
 
   return (
     <Card>
@@ -43,6 +46,8 @@ export function LoginForm({ next = "/dashboard", initialError }: Props) {
           placeholder="you@example.com"
           required
           disabled={pending}
+          aria-invalid={state?.error ? true : undefined}
+          aria-describedby={errorDescribedBy}
         />
         <Input
           label="Password"
@@ -52,10 +57,18 @@ export function LoginForm({ next = "/dashboard", initialError }: Props) {
           placeholder="Your password"
           required
           disabled={pending}
+          aria-invalid={state?.error ? true : undefined}
+          aria-describedby={errorDescribedBy}
         />
+        <p className="text-sm">
+          <Link href="/forgot-password" className="text-accent hover:underline">
+            Forgot password?
+          </Link>
+        </p>
 
         {state?.error ? (
           <p
+            id={FORM_ERROR_ID}
             role="alert"
             className="rounded-md border border-danger/40 bg-danger/10 px-3 py-2 text-sm text-danger"
           >

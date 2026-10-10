@@ -33,7 +33,9 @@ export function takeRateLimit(
   return { ok: true };
 }
 
-export function clientIpFromHeaders(headers: Headers): string {
+export function clientIpFromHeaders(headers: {
+  get(name: string): string | null;
+}): string {
   const forwarded = headers.get("x-forwarded-for");
   if (forwarded) {
     const first = forwarded.split(",")[0]?.trim();
